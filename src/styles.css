@@ -6,6 +6,25 @@
 @layer components {
   .gemini-button {
     @apply bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 flex items-center gap-2 justify-center shadow-lg hover:shadow-xl transform hover:scale-105;
+    background-image: linear-gradient(to right, #3b82f6, #8b5cf6);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
+  }
+
+  .gemini-button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 0 25px rgba(139, 92, 246, 0.5);
+  }
+
+  .gemini-button:disabled {
+    background-image: none;
+    background-color: #475569;
+    cursor: not-allowed;
+    box-shadow: none;
   }
 
   .project-card {
@@ -38,10 +57,18 @@
 
   .main-view {
     @apply hidden;
+    display: none;
   }
 
   .main-view.active {
-    @apply flex flex-col items-center justify-center min-h-screen p-6;
+    @apply block;
+    display: block;
+    animation: fadeIn 0.5s;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
   }
 
   .modal {
@@ -143,3 +170,63 @@
 /* Material Icons font */
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* Additional styles to ensure compatibility */
+.add-milestone-input {
+  @apply flex-grow p-2 border rounded-md bg-slate-700 border-slate-600 text-slate-200 placeholder-slate-400;
+}
+
+.add-milestone-input:focus {
+  border-color: #8b5cf6;
+  box-shadow: 0 0 0 2px #8b5cf6;
+}
+
+.kpi-card {
+  background-color: #1e293b;
+  border: 1px solid #334155;
+  box-shadow: 0 4px 24px 0 rgba(16,16,32,0.18);
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.kpi-card:hover {
+  box-shadow: 0 8px 32px 0 rgba(139,92,246,0.25);
+  transform: translateY(-2px) scale(1.03);
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.modal-overlay.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-content {
+  background-color: #1e293b;
+  border: 1px solid #475569;
+  padding: 2rem;
+  border-radius: 0.5rem;
+  max-width: 90%;
+  width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  transform: scale(0.95);
+  transition: transform 0.3s ease;
+}
+
+.modal-overlay.visible .modal-content {
+  transform: scale(1);
+}
