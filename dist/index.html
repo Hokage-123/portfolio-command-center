@@ -303,6 +303,24 @@
 
         document.addEventListener('DOMContentLoaded', async function() {
             console.log('DOM Content Loaded event fired');
+
+            // Immediate UI initialization - don't wait for Firebase
+            const appContainer = document.getElementById('app-container');
+            const hubView = document.getElementById('project-hub-view');
+
+            // Show the app immediately
+            if (appContainer) {
+                appContainer.classList.remove('hidden');
+                appContainer.style.display = 'block';
+                console.log('App container shown immediately');
+            }
+
+            // Show the hub view immediately
+            if (hubView) {
+                hubView.classList.add('active');
+                hubView.style.display = 'block';
+                console.log('Hub view shown immediately');
+            }
             const firebaseConfig = {
               apiKey: "AIzaSyASzOMggLbJRfuVsA3Xu0sYCOmnIM_Ed04",
               authDomain: "project-roadmap-app.firebaseapp.com",
@@ -1052,19 +1070,36 @@ async function startAIOnboarding() {
         setTimeout(() => { cancelAnimationFrame(anim); confetti.remove(); }, 2200);
       }
 
-      // Fallback: Show project hub after 3 seconds if Firebase doesn't work
+      // Immediate fallback: Show project hub and app container
       setTimeout(() => {
-          console.log('Fallback: Checking if hub is visible...');
+          console.log('Fallback: Ensuring app is visible...');
           const hubView = document.getElementById('project-hub-view');
           const loadingScreen = document.getElementById('loading-screen');
-          if (hubView && !hubView.classList.contains('active')) {
-              console.log('Fallback: Showing project hub manually');
-              hubView.classList.add('active');
-              if (loadingScreen) {
-                  loadingScreen.style.display = 'none';
-              }
+          const appContainer = document.getElementById('app-container');
+
+          // Force show the app container
+          if (appContainer) {
+              appContainer.classList.remove('hidden');
+              appContainer.style.display = 'block';
+              console.log('App container forced visible');
           }
-      }, 3000);
+
+          // Force show the hub view
+          if (hubView) {
+              hubView.classList.add('active');
+              hubView.style.display = 'block';
+              console.log('Hub view forced visible');
+          }
+
+          // Hide loading screen
+          if (loadingScreen) {
+              loadingScreen.style.display = 'none';
+              console.log('Loading screen hidden');
+          }
+
+          // Force render the hub
+          renderProjectHub();
+      }, 1000);
     </script>
 </body>
 </html>
