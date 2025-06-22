@@ -4,7 +4,8 @@ module.exports = {
     "./src/**/*.{html,js}",
     "./dist/**/*.{html,js}",
     "./*.html",
-    "./src/index.html"
+    "./src/index.html",
+    "!./node_modules/**/*"
   ],
   theme: {
     extend: {

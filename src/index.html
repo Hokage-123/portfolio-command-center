@@ -328,8 +328,9 @@
                 hubView.style.display = 'block';
                 console.log('Hub view shown immediately');
             }
+            // Firebase configuration - API key should be set via environment variable
             const firebaseConfig = {
-              apiKey: "AIzaSyASzOMggLbJRfuVsA3Xu0sYCOmnIM_Ed04",
+              apiKey: window.FIREBASE_API_KEY || "your-firebase-api-key-here",
               authDomain: "project-roadmap-app.firebaseapp.com",
               projectId: "project-roadmap-app",
               storageBucket: "project-roadmap-app.appspot.com",
@@ -579,7 +580,7 @@
                 ui.modalBody.innerHTML = '<p class="text-center animate-pulse">Generating response, please wait...</p>';
                 ui.modal.classList.add('visible');
                 const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
-                const apiKey = "AIzaSyD2uTV8oHgQalPUE2j1E5Z-lliXEymkEKk";
+                const apiKey = window.GEMINI_API_KEY || "your-gemini-api-key-here";
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
                 try {
                     const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
