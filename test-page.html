@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Command Center - Test Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background-color: #0056b3; }
+        iframe {
+            width: 100%;
+            height: 600px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🚀 Portfolio Command Center - Test Dashboard</h1>
+    
+    <div class="test-section">
+        <h2>📋 Application Status</h2>
+        <div id="app-status" class="status info">Checking application status...</div>
+        <button onclick="checkAppStatus()">🔄 Refresh Status</button>
+        <button onclick="openApp()">🚀 Open Application</button>
+    </div>
+
+    <div class="test-section">
+        <h2>🧪 Quick Tests</h2>
+        <div id="test-results"></div>
+        <button onclick="runQuickTests()">▶️ Run Tests</button>
+        <button onclick="createDummyProject()">➕ Create Dummy Project</button>
+    </div>
+
+    <div class="test-section">
+        <h2>📱 Application Preview</h2>
+        <p>The application should load below. If you see a blank frame, there might be an issue.</p>
+        <iframe id="app-frame" src="dist/index.html"></iframe>
+    </div>
+
+    <script>
+        function checkAppStatus() {
+            const statusDiv = document.getElementById('app-status');
+            statusDiv.innerHTML = 'Checking...';
+            
+            // Check if files exist by trying to fetch them
+            Promise.all([
+                fetch('dist/index.html').then(r => r.ok),
+                fetch('dist/styles.css').then(r => r.ok),
+                fetch('package.json').then(r => r.ok)
+            ]).then(results => {
+                const [htmlOk, cssOk, packageOk] = results;
+                
+                let status = '';
+                if (htmlOk && cssOk && packageOk) {
+                    status = '<div class="success">✅ All files found - Application ready!</div>';
+                } else {
+                    status = '<div class="error">❌ Missing files detected</div>';
+                    if (!htmlOk) status += '<div class="error">- dist/index.html missing</div>';
+                    if (!cssOk) status += '<div class="error">- dist/styles.css missing</div>';
+                    if (!packageOk) status += '<div class="error">- package.json missing</div>';
+                }
+                
+                statusDiv.innerHTML = status;
+            }).catch(error => {
+                statusDiv.innerHTML = '<div class="error">❌ Error checking files: ' + error.message + '</div>';
+            });
+        }
+
+        function openApp() {
+            window.open('dist/index.html', '_blank');
+        }
+
+        function runQuickTests() {
+            const resultsDiv = document.getElementById('test-results');
+            resultsDiv.innerHTML = '<div class="info">Running tests...</div>';
+            
+            // Test the iframe content
+            const iframe = document.getElementById('app-frame');
+            
+            try {
+                // Wait a bit for iframe to load
+                setTimeout(() => {
+                    let results = '';
+                    
+                    // Check if iframe loaded
+                    if (iframe.contentDocument || iframe.contentWindow) {
+                        results += '<div class="success">✅ Application iframe loaded</div>';
+                        
+                        // Try to access iframe content (might be blocked by CORS)
+                        try {
+                            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                            if (iframeDoc && iframeDoc.getElementById('app-container')) {
+                                results += '<div class="success">✅ App container found in iframe</div>';
+                            } else {
+                                results += '<div class="error">❌ App container not found</div>';
+                            }
+                        } catch (e) {
+                            results += '<div class="info">ℹ️ Cannot access iframe content (CORS protection)</div>';
+                        }
+                    } else {
+                        results += '<div class="error">❌ Application iframe failed to load</div>';
+                    }
+                    
+                    results += '<div class="info">💡 Open the application in a new tab for full testing</div>';
+                    resultsDiv.innerHTML = results;
+                }, 2000);
+                
+            } catch (error) {
+                resultsDiv.innerHTML = '<div class="error">❌ Test failed: ' + error.message + '</div>';
+            }
+        }
+
+        function createDummyProject() {
+            const resultsDiv = document.getElementById('test-results');
+            resultsDiv.innerHTML = '<div class="info">📝 To create a dummy project:</div>' +
+                                 '<div class="info">1. Open the application</div>' +
+                                 '<div class="info">2. Click "New Project"</div>' +
+                                 '<div class="info">3. Choose "Quick Start"</div>' +
+                                 '<div class="info">4. Enter project details:</div>' +
+                                 '<div class="info">&nbsp;&nbsp;• Name: "VBA Visio Project"</div>' +
+                                 '<div class="info">&nbsp;&nbsp;• Description: "Roll meter reading application with Visio integration"</div>' +
+                                 '<div class="info">5. Click "Create Project"</div>' +
+                                 '<div class="success">✅ This will create your first project example!</div>';
+        }
+
+        // Auto-check status on load
+        window.onload = function() {
+            checkAppStatus();
+            
+            // Auto-run tests after a delay
+            setTimeout(runQuickTests, 3000);
+        };
+    </script>
+</body>
+</html>
