@@ -713,8 +713,14 @@
               console.log('Hub view element:', hubView);
               console.log('App container element:', appContainer);
 
+              // Show the app container first, then activate the hub view
+              appContainer.classList.remove('hidden');
+
+              // Hide all other main views and show only the hub
+              const allViews = document.querySelectorAll('.main-view');
+              allViews.forEach(view => view.classList.remove('active'));
+
               hubView.classList.add('active');
-              appContainer.classList.add('hidden');
               console.log('Hub view classes after adding active:', hubView.className);
 
               const backToHubBtn = document.getElementById('back-to-hub-btn');
@@ -913,14 +919,11 @@ auth.onAuthStateChanged(async (user) => {
 
     // Additional fallback to ensure loading screen is hidden
     const loadingScreen = document.getElementById('loading-screen');
-    const appContainer = document.getElementById('app-container');
     if (loadingScreen) {
       loadingScreen.style.opacity = '0';
       setTimeout(() => { loadingScreen.style.display = 'none'; }, 500);
     }
-    if (appContainer) {
-      appContainer.classList.remove('hidden');
-    }
+    // Note: Don't manipulate app-container here, renderProjectHub handles it
   } else {
     console.log('No user, signing in anonymously...');
     await auth.signInAnonymously();
