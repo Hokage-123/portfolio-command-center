@@ -910,6 +910,17 @@ auth.onAuthStateChanged(async (user) => {
     renderProjectHub();
     console.log('Hub rendered, hiding loading...');
     hideLoading(); // Hide loading screen when authenticated
+
+    // Additional fallback to ensure loading screen is hidden
+    const loadingScreen = document.getElementById('loading-screen');
+    const appContainer = document.getElementById('app-container');
+    if (loadingScreen) {
+      loadingScreen.style.opacity = '0';
+      setTimeout(() => { loadingScreen.style.display = 'none'; }, 500);
+    }
+    if (appContainer) {
+      appContainer.classList.remove('hidden');
+    }
   } else {
     console.log('No user, signing in anonymously...');
     await auth.signInAnonymously();
