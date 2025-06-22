@@ -935,6 +935,7 @@ onAuthStateChanged(auth, async (user) => {
   if (user) {
     await loadProjectsFromFirestore(user);
     renderProjectHub();
+    hideLoading(); // Hide loading screen when authenticated
   } else {
     await signInAnonymously(auth);
   }
