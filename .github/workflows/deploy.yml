@@ -55,7 +55,7 @@ jobs:
     - name: 📤 Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: build-files
+        name: build-files-${{ github.run_number }}
         path: dist/
         retention-days: 1
 
@@ -73,7 +73,7 @@ jobs:
     - name: 📥 Download build artifacts
       uses: actions/download-artifact@v4
       with:
-        name: build-files
+        name: build-files-${{ github.run_number }}
         path: dist/
 
     - name: 🔧 Setup Pages
@@ -84,10 +84,13 @@ jobs:
       uses: actions/upload-pages-artifact@v3
       with:
         path: './dist'
+        name: github-pages-${{ github.run_number }}
 
     - name: 🚀 Deploy to GitHub Pages
       id: deployment
       uses: actions/deploy-pages@v4
+      with:
+        artifact_name: github-pages-${{ github.run_number }}
 
     - name: 🎉 Deployment Success
       run: |
@@ -105,4 +108,4 @@ permissions:
 # Concurrency control - only one deployment at a time
 concurrency:
   group: "pages-${{ github.ref }}"
-  cancel-in-progress: false
+  cancel-in-progress: true
