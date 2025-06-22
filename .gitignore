@@ -43,3 +43,16 @@ node_modules/
 .env.development.local
 .env.test.local
 .env.production.local
+
+# Security - API keys and secrets
+config.js
+secrets.js
+*.key
+*.pem
+*.p12
+firebase-adminsdk-*.json
+
+# Prevent accidental commit of API keys
+*apikey*
+*api-key*
+*secret*
