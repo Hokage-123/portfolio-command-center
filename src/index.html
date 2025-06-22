@@ -191,7 +191,7 @@
         </div>
     </div>
     
-    <div id="app-container" class="container mx-auto p-4 sm:p-6 lg:p-8">
+    <div id="app-container" class="container mx-auto p-4 sm:p-6 lg:p-8" style="display: block !important;">
         <header class="mb-6 flex justify-between items-center relative">
             <div class="flex items-center gap-3">
                 <span class="inline-block bg-gradient-to-tr from-blue-500 via-violet-500 to-fuchsia-500 rounded-full p-2 shadow-lg animate-pulse">
@@ -263,7 +263,7 @@
                 </section>
             </div>
 
-            <div id="project-hub-view" class="main-view active">
+            <div id="project-hub-view" class="main-view active" style="display: block !important;">
               <section class="mb-8 flex flex-col items-center justify-center text-center py-8">
                 <h2 class="text-3xl font-bold text-slate-100 mb-2">Project Hub</h2>
                 <p class="text-slate-400 mb-6 max-w-xl">Welcome, David! Manage all your projects from one place. Start a new project or dive into any existing one below.</p>
@@ -307,6 +307,38 @@
     <script>
         console.log('JavaScript is loading...');
         console.log('Firebase available:', typeof firebase !== 'undefined');
+
+        // IMMEDIATE INITIALIZATION - Show app right away
+        function forceShowApp() {
+            console.log('🚀 Force showing app...');
+            const appContainer = document.getElementById('app-container');
+            const hubView = document.getElementById('project-hub-view');
+            const loadingScreen = document.getElementById('loading-screen');
+
+            if (appContainer) {
+                appContainer.classList.remove('hidden');
+                appContainer.style.display = 'block';
+                console.log('✅ App container forced visible');
+            }
+
+            if (hubView) {
+                hubView.classList.add('active');
+                hubView.style.display = 'block';
+                console.log('✅ Hub view forced visible');
+            }
+
+            if (loadingScreen) {
+                loadingScreen.style.display = 'none';
+                console.log('✅ Loading screen hidden');
+            }
+        }
+
+        // Try to show app immediately
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', forceShowApp);
+        } else {
+            forceShowApp();
+        }
 
         document.addEventListener('DOMContentLoaded', async function() {
             console.log('DOM Content Loaded event fired');

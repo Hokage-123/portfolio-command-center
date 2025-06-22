@@ -59,6 +59,7 @@
         <h2>🧪 Quick Tests</h2>
         <div id="test-results"></div>
         <button onclick="runQuickTests()">▶️ Run Tests</button>
+        <button onclick="fixApp()">🔧 Fix App</button>
         <button onclick="createDummyProject()">➕ Create Dummy Project</button>
     </div>
 
@@ -104,19 +105,19 @@
         function runQuickTests() {
             const resultsDiv = document.getElementById('test-results');
             resultsDiv.innerHTML = '<div class="info">Running tests...</div>';
-            
+
             // Test the iframe content
             const iframe = document.getElementById('app-frame');
-            
+
             try {
                 // Wait a bit for iframe to load
                 setTimeout(() => {
                     let results = '';
-                    
+
                     // Check if iframe loaded
                     if (iframe.contentDocument || iframe.contentWindow) {
                         results += '<div class="success">✅ Application iframe loaded</div>';
-                        
+
                         // Try to access iframe content (might be blocked by CORS)
                         try {
                             const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
@@ -131,14 +132,55 @@
                     } else {
                         results += '<div class="error">❌ Application iframe failed to load</div>';
                     }
-                    
+
                     results += '<div class="info">💡 Open the application in a new tab for full testing</div>';
                     resultsDiv.innerHTML = results;
                 }, 2000);
-                
+
             } catch (error) {
                 resultsDiv.innerHTML = '<div class="error">❌ Test failed: ' + error.message + '</div>';
             }
+        }
+
+        function fixApp() {
+            const resultsDiv = document.getElementById('test-results');
+            resultsDiv.innerHTML = '<div class="info">Attempting to fix the application...</div>';
+
+            // Open the app in a new window and try to fix it
+            const appWindow = window.open('dist/index.html', '_blank');
+
+            setTimeout(() => {
+                try {
+                    // Try to access the new window and fix the app
+                    const appDoc = appWindow.document;
+                    const appContainer = appDoc.getElementById('app-container');
+                    const hubView = appDoc.getElementById('project-hub-view');
+                    const loadingScreen = appDoc.getElementById('loading-screen');
+
+                    if (appContainer) {
+                        appContainer.classList.remove('hidden');
+                        appContainer.style.display = 'block';
+                        resultsDiv.innerHTML += '<div class="success">✅ App container fixed</div>';
+                    }
+
+                    if (hubView) {
+                        hubView.classList.add('active');
+                        hubView.style.display = 'block';
+                        resultsDiv.innerHTML += '<div class="success">✅ Hub view fixed</div>';
+                    }
+
+                    if (loadingScreen) {
+                        loadingScreen.style.display = 'none';
+                        resultsDiv.innerHTML += '<div class="success">✅ Loading screen hidden</div>';
+                    }
+
+                    resultsDiv.innerHTML += '<div class="success">🎉 App should now be visible in the new tab!</div>';
+
+                } catch (error) {
+                    resultsDiv.innerHTML += '<div class="error">❌ Cannot access new window (security restriction)</div>';
+                    resultsDiv.innerHTML += '<div class="info">💡 The app opened in a new tab - check if it\'s visible there</div>';
+                }
+            }, 3000);
         }
 
         function createDummyProject() {
