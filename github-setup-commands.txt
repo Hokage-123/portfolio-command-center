@@ -1,0 +1,22 @@
+GitHub Setup Commands for Hokage-123
+=====================================
+
+After creating your repository at https://github.com/new, run these commands:
+
+git remote add origin https://github.com/Hokage-123/portfolio-command-center.git
+git branch -M main
+git push -u origin main
+
+Then enable GitHub Pages:
+1. Go to https://github.com/Hokage-123/portfolio-command-center
+2. Click "Settings" tab
+3. Scroll to "Pages" section
+4. Source: "Deploy from a branch"
+5. Branch: "main"
+6. Folder: "/ (root)"
+7. Click "Save"
+
+Your app will be live at:
+https://Hokage-123.github.io/portfolio-command-center/
+
+Note: It may take a few minutes for the site to become available after enabling Pages.

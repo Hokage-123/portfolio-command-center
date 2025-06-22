@@ -291,18 +291,18 @@
       </div>
     </div>
 
-    <script type="module">
-        console.log('JavaScript module is loading...');
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getAuth, signInWithCustomToken, onAuthStateChanged, signOut, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-        console.log('Firebase imports successful');
+    <script>
+        console.log('JavaScript is loading...');
+        console.log('Firebase available:', typeof firebase !== 'undefined');
 
         document.addEventListener('DOMContentLoaded', async function() {
             console.log('DOM Content Loaded event fired');
-            const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+            const firebaseConfig = {
               apiKey: "AIzaSyASzOMggLbJRfuVsA3Xu0sYCOmnIM_Ed04",
               authDomain: "project-roadmap-app.firebaseapp.com",
               projectId: "project-roadmap-app",
@@ -310,12 +310,12 @@
               messagingSenderId: "77678645722",
               appId: "1:77678645722:web:9c4095c0d81d3f32d870e3"
             };
-            
-            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
 
-            const app = initializeApp(firebaseConfig);
-            const auth = getAuth(app);
-            const db = getFirestore(app);
+            console.log('Initializing Firebase...');
+            firebase.initializeApp(firebaseConfig);
+            const auth = firebase.auth();
+            const db = firebase.firestore();
+            console.log('Firebase initialized successfully');
 
             let roadmapData = null;
             let dbRef = null;
@@ -353,14 +353,15 @@
             
             async function saveDataToFirestore() {
                 if (!dbRef) return;
-                try { await setDoc(dbRef, roadmapData); } catch (e) { console.error("Error saving data: ", e); }
+                try { await dbRef.set(roadmapData); } catch (e) { console.error("Error saving data: ", e); }
             }
 
             async function loadDataFromFirestore(user) {
+                const appId = 'default-app-id';
                 const docPath = `artifacts/${appId}/users/${user.uid}/roadmapData/state`;
-                dbRef = doc(db, docPath);
-                const docSnap = await getDoc(dbRef);
-                if (docSnap.exists()) {
+                dbRef = db.doc(docPath);
+                const docSnap = await dbRef.get();
+                if (docSnap.exists) {
                     roadmapData = docSnap.data();
                 } else {
                     roadmapData = {
@@ -816,9 +817,10 @@ async function saveProjectsToFirestore() {
   showLoading('Saving projects...');
   try {
     const user = auth.currentUser;
+    const appId = 'default-app-id';
     const docPath = `artifacts/${appId}/users/${user.uid}/projects/state`;
-    const ref = doc(db, docPath);
-    await setDoc(ref, { projects });
+    const ref = db.doc(docPath);
+    await ref.set({ projects });
   } catch (e) {
     showErrorModal('Failed to save projects. Please try again.');
     console.error('Error saving projects:', e);
@@ -829,11 +831,12 @@ async function saveProjectsToFirestore() {
 
 async function loadProjectsFromFirestore(user) {
   showLoading('Loading projects...');
+  const appId = 'default-app-id';
   const docPath = `artifacts/${appId}/users/${user.uid}/projects/state`;
-  projectsRef = doc(db, docPath);
+  projectsRef = db.doc(docPath);
   try {
-    const docSnap = await getDoc(projectsRef);
-    if (docSnap.exists()) {
+    const docSnap = await projectsRef.get();
+    if (docSnap.exists) {
       projects = docSnap.data().projects || [];
     } else {
       projects = [];
@@ -945,7 +948,7 @@ document.getElementById('back-to-hub-btn').onclick = function() {
   renderProjectHub();
 };
 // --- Patch authentication to load projects on login ---
-onAuthStateChanged(auth, async (user) => {
+auth.onAuthStateChanged(async (user) => {
   if (user) {
     console.log('User authenticated, loading projects...');
     await loadProjectsFromFirestore(user);
@@ -955,7 +958,7 @@ onAuthStateChanged(auth, async (user) => {
     hideLoading(); // Hide loading screen when authenticated
   } else {
     console.log('No user, signing in anonymously...');
-    await signInAnonymously(auth);
+    await auth.signInAnonymously();
   }
 });
 
