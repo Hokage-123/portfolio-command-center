@@ -292,11 +292,16 @@
     </div>
 
     <script type="module">
+        console.log('JavaScript module is loading...');
+
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, signInWithCustomToken, onAuthStateChanged, signOut, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+        console.log('Firebase imports successful');
+
         document.addEventListener('DOMContentLoaded', async function() {
+            console.log('DOM Content Loaded event fired');
             const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
               apiKey: "AIzaSyASzOMggLbJRfuVsA3Xu0sYCOmnIM_Ed04",
               authDomain: "project-roadmap-app.firebaseapp.com",
@@ -1075,6 +1080,20 @@ async function startAIOnboarding() {
         loop();
         setTimeout(() => { cancelAnimationFrame(anim); confetti.remove(); }, 2200);
       }
+
+      // Fallback: Show project hub after 3 seconds if Firebase doesn't work
+      setTimeout(() => {
+          console.log('Fallback: Checking if hub is visible...');
+          const hubView = document.getElementById('project-hub-view');
+          const loadingScreen = document.getElementById('loading-screen');
+          if (hubView && !hubView.classList.contains('active')) {
+              console.log('Fallback: Showing project hub manually');
+              hubView.classList.add('active');
+              if (loadingScreen) {
+                  loadingScreen.style.display = 'none';
+              }
+          }
+      }, 3000);
     </script>
 </body>
 </html>
