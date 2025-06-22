@@ -878,12 +878,21 @@ const defaultCreateProjectHandler = document.getElementById('create-project-btn'
 
 // Patch Project Hub cards to add edit/delete buttons
 function renderProjectHub() {
-  document.getElementById('project-hub-view').classList.add('active');
-  document.getElementById('app-container').classList.add('hidden');
+  console.log('renderProjectHub called');
+  const hubView = document.getElementById('project-hub-view');
+  const appContainer = document.getElementById('app-container');
+  console.log('Hub view element:', hubView);
+  console.log('App container element:', appContainer);
+
+  hubView.classList.add('active');
+  appContainer.classList.add('hidden');
+  console.log('Hub view classes after adding active:', hubView.className);
+
   const backToHubBtn = document.getElementById('back-to-hub-btn');
   if (backToHubBtn) backToHubBtn.classList.add('hidden');
   const list = document.getElementById('project-list');
   list.innerHTML = '';
+  console.log('Project list element:', list);
   // Add Import button
   const importBtn = document.createElement('button');
   importBtn.className = 'gemini-button mb-4 flex items-center gap-2 justify-center';
@@ -933,10 +942,14 @@ document.getElementById('back-to-hub-btn').onclick = function() {
 // --- Patch authentication to load projects on login ---
 onAuthStateChanged(auth, async (user) => {
   if (user) {
+    console.log('User authenticated, loading projects...');
     await loadProjectsFromFirestore(user);
+    console.log('Projects loaded, rendering hub...');
     renderProjectHub();
+    console.log('Hub rendered, hiding loading...');
     hideLoading(); // Hide loading screen when authenticated
   } else {
+    console.log('No user, signing in anonymously...');
     await signInAnonymously(auth);
   }
 });
