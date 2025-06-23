@@ -13,7 +13,31 @@ export class GeminiService {
   private baseUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
 
   constructor() {
-    this.apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+    this.updateApiKey();
+    
+    // Listen for API key updates
+    if (typeof window !== 'undefined') {
+      window.addEventListener('apiKeysUpdated', (event: any) => {
+        this.updateApiKey();
+      });
+    }
+  }
+
+  private updateApiKey() {
+    // Try localStorage first, then environment variable as fallback
+    const savedKeys = localStorage.getItem('portfolio_api_keys');
+    if (savedKeys) {
+      try {
+        const parsedKeys = JSON.parse(savedKeys);
+        this.apiKey = parsedKeys.geminiApiKey || '';
+      } catch (error) {
+        console.error('Error parsing saved API keys:', error);
+        this.apiKey = import.meta.env.VITE_GEMINI_API_KEY || '';
+      }
+    } else {
+      this.apiKey = import.meta.env.VITE_GEMINI_API_KEY || '';
+    }
+
     if (!this.apiKey || this.apiKey === 'demo_gemini_key') {
       console.warn('Gemini API key not configured. AI features will be limited.');
     }
@@ -21,7 +45,7 @@ export class GeminiService {
 
   async generateContent(prompt: string): Promise<string> {
     if (!this.apiKey || this.apiKey === 'demo_gemini_key') {
-      throw new Error('Gemini API key not configured. Please set VITE_GEMINI_API_KEY in your .env file.');
+      throw new Error('Gemini API key not configured. Please add your API key in Settings to enable AI features.');
     }
 
     const payload = {

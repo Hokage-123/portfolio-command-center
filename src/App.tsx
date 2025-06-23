@@ -6,6 +6,7 @@ import Dashboard from './components/Dashboard';
 import Projects from './components/Projects';
 import Portfolio from './components/Portfolio';
 import Journal from './components/Journal';
+import Settings from './components/Settings';
 import Onboarding from './components/Onboarding';
 
 const AppContent: React.FC = () => {
@@ -27,6 +28,7 @@ const AppContent: React.FC = () => {
         {state.currentView === 'projects' && <Projects />}
         {state.currentView === 'portfolio' && <Portfolio />}
         {state.currentView === 'journal' && <Journal />}
+        {state.currentView === 'settings' && <Settings />}
       </main>
     </div>
   );

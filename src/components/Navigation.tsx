@@ -5,6 +5,7 @@ import {
   FolderKanban, 
   User, 
   BookOpen, 
+  Settings,
   Sparkles,
   LogOut
 } from 'lucide-react';
@@ -36,6 +37,12 @@ const Navigation: React.FC = () => {
       label: 'Journal',
       icon: BookOpen,
       description: 'Progress Tracking'
+    },
+    {
+      id: 'settings' as const,
+      label: 'Settings',
+      icon: Settings,
+      description: 'API Configuration'
     }
   ];
 

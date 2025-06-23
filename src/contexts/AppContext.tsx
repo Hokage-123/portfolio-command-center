@@ -39,7 +39,7 @@ export interface JournalEntry {
 }
 
 export interface AppState {
-  currentView: 'dashboard' | 'projects' | 'portfolio' | 'journal' | 'onboarding';
+  currentView: 'dashboard' | 'projects' | 'portfolio' | 'journal' | 'onboarding' | 'settings';
   projects: Project[];
   journalEntries: JournalEntry[];
   user: {
