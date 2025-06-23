@@ -1091,6 +1091,18 @@ async function startAIOnboarding() {
           renderRoadmap();
           setupNavigation();
         };
+
+        // Export renderProjectHub to global scope to fix "renderProjectHub is not defined" error
+        window.renderProjectHub = renderProjectHub;
+        window.showNewProjectModal = showNewProjectModal;
+        window.hideNewProjectModal = hideNewProjectModal;
+        window.saveProjectsToFirestore = saveProjectsToFirestore;
+        window.loadProjectsFromFirestore = loadProjectsFromFirestore;
+        window.showLoading = showLoading;
+        window.hideLoading = hideLoading;
+        window.showErrorModal = showErrorModal;
+        window.showImportModal = showImportModal;
+        window.startAIOnboarding = startAIOnboarding;
     </script>
     <script>
       // Confetti animation for phase completion
