@@ -1,0 +1,111 @@
+name: 🚀 Deploy Portfolio Command Center
+
+on:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - 'README.md'
+      - 'docs/**'
+      - '*.md'
+  workflow_dispatch: # Allow manual triggering
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  # Build and test the application
+  build:
+    name: 🔨 Build Application
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 📥 Checkout repository
+      uses: actions/checkout@v4
+
+    - name: 📦 Setup Node.js ${{ env.NODE_VERSION }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+
+    - name: 🔍 Cache dependencies
+      uses: actions/cache@v4
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+
+    - name: 📋 Install dependencies
+      run: npm ci --prefer-offline --no-audit
+
+    - name: 🔒 Security audit
+      run: npm audit --audit-level=high
+      continue-on-error: true
+
+    - name: 🏗️ Build project
+      run: npm run build
+
+    - name: ✅ Verify build output
+      run: |
+        echo "Checking build output..."
+        ls -la dist/
+        echo "Build verification complete!"
+
+    - name: 📤 Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-files-${{ github.run_number }}
+        path: dist/
+        retention-days: 1
+
+  # Deploy to GitHub Pages
+  deploy:
+    name: 🌐 Deploy to GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+    - name: 📥 Download build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: build-files-${{ github.run_number }}
+        path: dist/
+
+    - name: 🔧 Setup Pages
+      id: pages
+      uses: actions/configure-pages@v4
+
+    - name: 📦 Upload to Pages
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: './dist'
+        name: github-pages-${{ github.run_number }}
+
+    - name: 🚀 Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
+      with:
+        artifact_name: github-pages-${{ github.run_number }}
+
+    - name: 🎉 Deployment Success
+      run: |
+        echo "🎉 Portfolio Command Center deployed successfully!"
+        echo "🌐 Live URL: ${{ steps.deployment.outputs.page_url }}"
+
+# Permissions for GitHub Pages deployment and security scanning
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+  actions: read
+  security-events: write
+
+# Concurrency control - only one deployment at a time
+concurrency:
+  group: "pages-${{ github.ref }}"
+  cancel-in-progress: true
